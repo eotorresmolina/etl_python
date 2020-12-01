@@ -18,6 +18,8 @@ import bonobo
 import time
 import requests
 
+import functions
+
 # Install bonobo
 #   pip3 install -U bonobo 
 # Crear archivo "dot"
@@ -32,13 +34,17 @@ def extract():
     # Realice un bucle que recorra una lista del 0 al 10 inclusive
     # En cada iteración de ese bucle realizar un "yield" del valor
     # tomado de la lista
-    yield 1
+
+    print('\n\nDatos Extraídos!!:\n\n')
+    for num in range(1, 11):
+        yield num
 
 
 def transform(x):
     # Por cada número que ingrese a transform
     # multiplicarlo por 5
-    yield 1
+    print('Transfomo el Dato: {}'.format(x))
+    yield (5*x)
 
 
 def load(result):
@@ -48,6 +54,15 @@ def load(result):
     # o insertando a una base de datos a elección.
     # El objetivo es que quede almacenado en un archivo
     # o una base de datos la tabla del 5
+
+    formato='csv'
+
+    if formato == 'db':
+        functions.fill(result)
+
+    elif formato == 'csv':
+        functions.writer_csv(result)
+
     print('Fin!')
 
 
@@ -62,9 +77,17 @@ def get_services(**options):
 
 
 if __name__ == "__main__":
+
+    
+    #Creo DB:
+    functions.create_schema()
+
     parser = bonobo.get_argument_parser()
     with bonobo.parse_args(parser) as options:
         bonobo.run(
             get_graph(**options),
             services=get_services(**options)
         )
+
+    #print(functions.show())
+    #print(functions.read_csv())
